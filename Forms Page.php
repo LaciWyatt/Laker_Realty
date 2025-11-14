@@ -1,3 +1,82 @@
+
+<?php// Laker Realty — Milestone 2 — Validation ONLY (no database)
+
+// ---- Helpers ----
+function s($v){ return htmlspecialchars(trim($v ?? ''), ENT_QUOTES, 'UTF-8'); }
+function req($v){ return $v !== '' && $v !== null; }
+function is_zip5($v){ return preg_match('/^\d{5}$/', $v); }
+function is_name($v){ return preg_match("/^[A-Za-z' -]{1,60}$/", $v); }
+function max_len($v,$n){ return strlen($v) <= $n; }
+function in_list($v,$list){ return in_array($v, $list, true); }
+
+// ---- Allowed values ----
+$allowed_types = ['Single Family','Condo','Townhouse','Multi-Family','Commercial','Land'];
+$allowed_bedtypes = ['1+','2+','3+','4+'];
+
+// ---- Read inputs (exact field names from your form) ----
+$type            = s($_POST['type']            ?? '');
+$PropertyAddress = s($_POST['PropertyAddress'] ?? '');
+$PropertyCity    = s($_POST['PropertyCity']    ?? '');
+$PropertyZipCode = s($_POST['PropertyZipCode'] ?? '');
+$AgentFName      = s($_POST['AgentFName']      ?? '');
+$AgentLName      = s($_POST['AgentLName']      ?? '');
+$OfficeName      = s($_POST['OfficeName']      ?? '');
+$Email           = s($_POST['Email']           ?? '');
+
+
+$errors = [];
+$success = '';
+
+// ---- Validate on submit ----
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!req($type) || !in_list($type,$allowed_types)) {
+    $errors['type'] = 'Please select a valid property type.';
+  }
+  if (!req($PropertyAddress)) {
+    $errors['PropertyAddress'] = 'Address is required.';
+  } elseif (!max_len($PropertyAddress,120)) {
+    $errors['PropertyAddress_len'] = 'Address is too long (max 120 characters).';
+  }
+
+  if (!req($PropertyCity)) {
+    $errors['PropertyCity'] = 'City is required.';
+  } elseif (!is_name($PropertyCity)) {
+    $errors['PropertyCity_fmt'] = 'City can include letters, spaces, hyphens, apostrophes.';
+  }
+
+  if (!req($PropertyZipCode) || !is_zip5($PropertyZipCode)) {
+    $errors['PropertyZipCode'] = 'ZIP must be 5 digits.';
+  }
+
+  if (!req($AgentFName) || !is_name($AgentFName)) {
+    $errors['AgentFName'] = 'First name is required (letters/spaces only).';
+  }
+  if (!req($AgentLName) || !is_name($AgentLName)) {
+    $errors['AgentLName'] = 'Last name is required (letters/spaces only).';
+  }
+
+  if (!req($OfficeName)) {
+    $errors['OfficeName'] = 'Office name is required.';
+  } elseif (!max_len($OfficeName,80)) {
+    $errors['OfficeName_len'] = 'Office name is too long (max 80 characters).';
+  }
+
+  if (!req($Email) || !filter_var($Email, FILTER_VALIDATE_EMAIL)) {
+    $errors['Email'] = 'Enter a valid company email (e.g., name@example.com).';
+  }
+
+  if (!$errors) {
+    // Milestone 2 requirement: validation only (no DB)
+    $success = 'New listing validated successfully. (Milestone 2: validation only — no database insert.)';
+  }
+}
+
+ 
+  ?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +97,6 @@ form{
 	padding:1em;
 }
 header,nav,footer {
-	<!--background-color:orange;-->
 	color: #2E5A88;
 	text-align:center;
 	padding:1em;
@@ -62,8 +140,8 @@ h6{
 <label for="city">City:</label>
 <input type="text" name="city" id="city" placeholder="Enter City"><br><br>
 
-<label for="listing price">Search Transactions by Sale Price:</label>
-<input type="number" name="SalesPrice" id="SalePrice" placeholder="Enter Phone Number"><br><br>
+<label for="listing price">Search Transactions by Sales Price:</label>
+<input type="number" name="SalesPrice" id="SalePrice" placeholder="Enter Maximum Price"><br><br>
 
 <label for="type">Search Properties by Property Type:</label>
 <select name="type" id="type">
@@ -85,40 +163,13 @@ h6{
 <option value="4">4+</option>
 </select><br><br>
 
-<button type="submit">Search</button>
+<button type="submit" name="searchSubmit">Search</button>
 </form>
 
-<!--Query Form PHP Parameters-->
 
-<?php
-/*
-include "realestate.sql";
+<!-- line break to seperate page-->
+<hr> 
 
-$property_type = '';
-$single_family = false;
-$condo = false;
-$townhouse = false;
-$multifam = false;
-$commercial = false;
-$land = false;
-
-if($single_family){
-	$property_type = 'Single Family';
-}elseif($condo){
-	$property_type = 'Condo';
-}elseif($townhouse){
-	$property_type = 'Townhouse';
-}elseif($multifam){
-	$property_type = 'Multi-Family';
-}elseif($commercial){
-	$property_type = 'Commercial';
-}else($land){
-	$property_type = 'Land';
-}
-*/
-
-
-?>
 
 <h4>Update Form</h4>
 
@@ -148,7 +199,7 @@ if($single_family){
 <input type="text" id="city" name="city" placeholder="Enter City"><br><br>
 
 <label for="State">State:</label>
-<input type="text" id="State" name="State" placeholder="Enter State"><br><br>
+<input type="text" id="State" name="State" placeholder="GA"><br><br>
 
 <label for="ZipCode">Zip Code:</label>
 <input type="number" id="ZipCode" name="ZipCode" placeholder="Enter Zip Code"><br><br>
@@ -162,21 +213,27 @@ if($single_family){
 
 </select><br><br>
 
-<button type="submit">Update</button>
+<button type="submit" name="updateSubmit">Update</button>
 
 </form>
 </section>
 
-<!--Update Form PHP Parameters-->
-<?php
 
-
-
-?>
+<!-- line break to seperate page-->
+<hr>
 
 <h5>Insert Form</h5>
 
 <strong>Add New Listing Below:</strong>
+
+ <?php if(!empty($errors)): ?>
+    <div class="errors">
+      <strong>Please fix:</strong>
+      <ul><?php foreach($errors as $msg) echo "<li>$msg</li>"; ?></ul>
+    </div>
+  <?php elseif(null && empty($errors)): ?>
+    <div class="success"><?php echo $success; ?></div>
+  <?php endif; ?>
 
 <form action="Forms Page.php" method="POST">
 <label for="type">Select Property Type:</label>
@@ -188,32 +245,34 @@ if($single_family){
 <option value="Multi-Family">Multi-Family</option>
 <option value="Commercial">Commercial</option>
 <option value="Land">Land</option>
+<?php
+            foreach($allowed_types as $opt){
+              $sel = ($type===$opt)?'selected':'';
+              echo "<option value=\"$opt\" $sel>$opt</option>";
+            }
+          ?>
 </select><br><br>
 
 <label for="PropertyAddress">New Address:</label>
-<input type="text" id="PropertyAddress" name="PropertyAddress" placeholder="Enter Property Address"><br><br>
+<input type="text" id="PropertyAddress" name="PropertyAddress" value="<?php echo $PropertyAddress ?? ''; ?>" placeholder="Enter Property Address"><br><br>
 
 <label for="City">City of Property:</label>
-<input type="text" id="PropertyCity" name="PropertyCity" placeholder="Enter City of Property"><br><br>
+<input type="text" id="PropertyCity" name="PropertyCity" value="<?php echo $PropertyCity ?? ''; ?>" placeholder="Enter City of Property"><br><br>
 
 
 <label for="PropertyZipCode">Zip Code:</label>
-<input type="number" id="PropertyZipCode" name="PropertyZipCode" placeholder="Enter Property Zip Code"><br><br>
+<input type="number" id="PropertyZipCode" name="PropertyZipCode" value="<?php echo $PropertyZipCode ?? ''; ?>" placeholder="Enter Property Zip Code"><br><br>
 
-<label>Agent First Name: <input type="text" name="AgentFName" placeholder="Enter First Name"></label><br><br>
-<label>Agent Last Name: <input type="text" name="AgentLName" placeholder="Enter Last Name"></label><br><br>
-<label>Office Name: <input type="text" name="OfficeName" placeholder="Enter Office Name"></label><br><br>
-<label>Company Email: <input type="text" name="Email" placeholder="Enter Email"></label><br><br>
+<label>Agent First Name: <input type="text" name="AgentFName" value="<?php echo $AgentFName ?? ''; ?>" placeholder="Enter First Name"></label><br><br>
+<label>Agent Last Name: <input type="text" name="AgentLName" value="<?php echo $AgentLName ?? ''; ?>" placeholder="Enter Last Name"></label><br><br>
+<label>Office Name: <input type="text" name="OfficeName" value="<?php $OfficeName ?? ''; ?>" placeholder="Enter Office Name"></label><br><br>
+<label>Company Email: <input type="text" name="Email" value="<?php echo $Email ?? ''; ?>" placeholder="Enter Email"></label><br><br>
 
-<input type="submit">
+<input type="submit" name="inputSubmit">
+
 </form>
 
-<!--Insert Form PHP Parameters-->
-<?php
 
-
-
-?>
 <footer>
     <div class="container">
       © <span id="year"></span> Laker Realty • All rights reserved
