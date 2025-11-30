@@ -12,7 +12,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function clean_input($data) {
         return htmlspecialchars(stripslashes(trim($data)));
     }
+// PDO Database Connection
+$host = "localhost";
+$dbname = "laker_realty";
+$username = "root";
+$password = "";
 
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database Connection Failed: " . $e->getMessage());
+}
     // Retrieve and validate form inputs
     $client_id = clean_Input($_POST["client_id"]);
     $first_name = clean_Input($_POST["first_name"]);
