@@ -1,6 +1,6 @@
 <?php
 // Report by Savian Walker
-// Coastal Gergia active listings
+// Coastal Georgia active listings
 
 $dsn  = "mysql:host=localhost;dbname=realestate;charset=utf8mb4";
 $user = "root";
