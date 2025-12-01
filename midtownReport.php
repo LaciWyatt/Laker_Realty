@@ -29,17 +29,13 @@ try {
             p.status,
             t.type_name,
             r.region,
-            a.agent_name
         FROM properties AS p
         JOIN property_types AS t
             ON p.type_id = t.type_id
         JOIN regions AS r
             ON p.region_number = r.region_number
-        JOIN agents AS a
-            ON p.agent_id = a.agent_id
         WHERE p.status = 'active'
           AND r.region = 'Midtown Atlanta'
-          AND a.agent_name = 'Savian Walker'
         ORDER BY t.type_name, p.listing_price DESC
     ";
 
