@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Reports - Real Estate</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="Reports.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <h1><div class="logo">Laker Realty</div></h1>
+            <!--<ul class="nav-links">
+                <li><a href="IndexHome.html">Homepage</a></li>
+            </ul>-->
+			 </div>
+      <nav aria-label="Primary">
+        <a href="IndexHome.html" aria-current="page">Home</a>
+        <a href="Forms Page.php">Forms</a>
+        <a href="Reports.html">Reports</a>
+      </nav>
+    </div>
+        </nav>
+    </header>
+
+    <main class="reports-container">
+        <h1 class="page-heading">Agent Performance Reports</h1>
+        <p class="description">
+            Below are the performance reports for our top real estate agents.
+        </p>
+
+        <section class="report-section" id="savian-walker-report">
+            <h2 class="report-title">Savian Walker: Coastal Georgia Report</h2>
+            <p class="report-description">
+                <!--This report will display a detailed breakdown of Savian Walker's currently active properties, categorized by property type (e.g., single-family, condominium, multi-family). 
+                This report will also display complete transaction history, including properties sold, clients served, and sales performance over time.
+                An overview of this agent's transaction history <i class="e"></i>year-to-date sales figures, number of closures, and total revenue generated is inlcuded.
+				-->
+            </p>
+            <div class="report-content-placeholder">
+                <!-- Data from the realestate.sql database will be displayed here -->
+                <p>Generating report data...</p>
+            </div>
+			
+			<nav aria-label="Primary">
+				 <a href="coastalGeorgiareport.php" class = "btn">Coastal Georgia Report by Savian Walker</a>
+				</nav>
+        </section>
+
+        <section class="report-section" id="laci-wyatt-report">
+            <h2 class="report-title">Laci Wyatt: South Georgia Report</h2>
+            <p class="report-description">
+			
+              <!--  This report will show Laci Wyatt's current active properties, categorized by property type (e.g., single-family, condominium, multi-family). 
+                This report will also display complete transaction history, including properties sold, clients served, and sales performance over time.
+                An overview of this agent's transaction history <i class="e"></i>year-to-date sales figures, number of closures, and total revenue generated is inlcuded.-->
+            <div class="report-content-placeholder">
+                <!-- Data from the realestate.sql database will be displayed here -->
+                <p>Generating report data...</p
+				 
+            </div>
+				<nav aria-label="Primary">
+				 <a href="SouthGAReport.php" class = "btn">South Georgia Report by Laci Wyatt</a>
+				</nav>
+        </section>
+
+        <section class="report-section" id="jennifer-washington-report">
+            <h2 class="report-title">Jennifer Washington: Metro Atlanta Report</h2>
+            <p class="report-description">
+              <!--  This report will provide an overview of Jennifer Washington's current active properties, categorized by property type (e.g., single-family, condominium, multi-family). 
+                This report will also display complete transaction history, including properties sold, clients served, and sales performance over time.
+                An overview of this agent's transaction history <i class="e"></i>year-to-date sales figures, number of closures, and total revenue generated is inlcuded.-->
+            </p>
+            <div class="report-content-placeholder">
+                <!-- Data from the realestate.sql database will be displayed here -->
+                <p>Generating report data...</p>
+            </div>
+			<nav aria-label="Primary">
+				 <a href="MetroATLReport.php" class = "btn">Metro Atlanta Report by Jennifer Washington</a>
+				</nav>
+        </section>
+
+    </main>
+
+   <footer>
+    <div class="container">
+      © <span id="year"></span> Laker Realty • All rights reserved
+    </div>
+  </footer>
+   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
